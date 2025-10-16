@@ -7,5 +7,5 @@ public class TerrainType : ScriptableObject
     public bool _isWater { get; private set; }
 
     public float _mapElevation { get; private set; }
-    public float _biomeTemperature { get; private set; } //?
+    //public float _biomeTemperature { get; private set; }
 }

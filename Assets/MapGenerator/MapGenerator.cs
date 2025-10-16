@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -26,7 +28,7 @@ public class MapGenerator : MonoBehaviour
 
     [SerializeField] private Tile _gridTile;
 
-    [SerializeField] private TerrainType[] terrainTypes;
+    [SerializeField] private TerrainType[] _terrainTypes;
 
     private Dictionary<Vector2, Tile> _grid;
 
@@ -38,9 +40,8 @@ public class MapGenerator : MonoBehaviour
         {
             for (int x = 0; x < _mapWidth; x++)
             {
-                //looks suspicious, not sure if assigning the correct thing...
-                _grid[new Vector2(x, y)] = _gridTile;
-
+                Vector2 pos = new Vector2(x, y);
+                _grid[pos] = Instantiate(_gridTile, pos, Quaternion.identity);
             }
         }
     }
@@ -49,5 +50,12 @@ public class MapGenerator : MonoBehaviour
     {
         if(_grid.TryGetValue(position, out Tile tile)) return tile;
         else return null;
+    }
+
+    public float GetNoiseHeight(Vector2 position)
+    {
+
+
+        return 0f;
     }
 }
