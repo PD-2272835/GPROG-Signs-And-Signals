@@ -51,11 +51,4 @@ public class MapGenerator : MonoBehaviour
         if(_grid.TryGetValue(position, out Tile tile)) return tile;
         else return null;
     }
-
-    public float GetNoiseHeight(Vector2 position)
-    {
-
-
-        return 0f;
-    }
 }

@@ -1,3 +1,4 @@
+//Adapted from Code Monkey on Youtube (2019) https://www.youtube.com/watch?v=8jrAWtI8RXg
 using UnityEngine;
 
 public class Grid<TGridObject>
@@ -18,7 +19,7 @@ public class Grid<TGridObject>
         _cells = new TGridObject[gridWidth, gridHeight];
     }
 
-    private bool IsInGrid(int x, int y)
+    public bool IsInGrid(int x, int y)
     {
         if (x >= 0 && y >= 0 && x <= _width && y <= _height)
         {
@@ -46,8 +47,8 @@ public class Grid<TGridObject>
 
     public TGridObject GetCellValue(Vector3 worldPosition)
     {
-        int x = Mathf.FloorToInt(worldPosition.x / _cellSize);
-        int y = Mathf.FloorToInt(worldPosition.y / _cellSize); 
+        int x = Mathf.FloorToInt((worldPosition.x / _cellSize) - _originPosition.x);
+        int y = Mathf.FloorToInt((worldPosition.y / _cellSize) - _originPosition.y);
         return GetCellValue(x, y);
     }
 }
