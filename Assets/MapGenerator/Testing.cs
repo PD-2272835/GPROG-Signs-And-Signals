@@ -13,11 +13,18 @@ public class Testing : MonoBehaviour
         balls = new CustomGrid<bool>(_gridWidth, _gridHeight, 1f, transform.position);
         action = InputSystem.actions.FindAction("Interact");
     }
-
    
     void Update()
     {
         if (action.IsPressed())
+        {
+            balls.DebugDrawGrid();
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (balls != null)
         {
             balls.DebugDrawGrid();
         }
