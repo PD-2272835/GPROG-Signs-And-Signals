@@ -1,6 +1,8 @@
 using UnityEngine;
 
-public class NewEmptyCSharpScript
+public class GooberContext : MonoBehaviour
 {
-    
+    private GooberState _state;
+
+
 }

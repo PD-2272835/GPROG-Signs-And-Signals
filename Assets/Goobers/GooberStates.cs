@@ -1,19 +1,33 @@
+using System;
 using UnityEngine;
-
-
-//callbacks that each state must implement
-/*public interface IGooberState
-{
-    void HandleInput();
-    void Update();
-}
-*/
 
 public abstract class GooberState
 {
-
-    public abstract void HandleInput();
-    public abstract void Update();
+    public abstract void EnterState(GooberContext context);
+    public abstract void UpdateInput(GooberContext context);
+    public abstract void Update(GooberContext context);
 }
 
+//concrete states
+public class GooberIdle : GooberState
+{
+    void EnterState(GooberContext context)
+    {
+        throw (new NotImplementedException());
+    }
 
+    void UpdateInput(GooberContext context)
+    {
+        throw (new NotImplementedException());
+    }
+
+    void Update(GooberContext context)
+    {
+        throw (new NotImplementedException());
+    }
+}
+
+public class GooberPathing : GooberState
+{
+
+}
