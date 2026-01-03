@@ -1,6 +1,7 @@
 //Adapted from Code Monkey on Youtube (2019) https://www.youtube.com/watch?v=8jrAWtI8RXg
-using System.Buffers;
 using UnityEngine;
+using System.Collections.Generic;
+using System;
 
 public class CustomGrid<TGridObject>
 {
@@ -11,13 +12,22 @@ public class CustomGrid<TGridObject>
 
     private TGridObject[,] _cells;
 
-    public CustomGrid(int gridWidth, int gridHeight, float cellSize, Vector3 originPosition)
+    public CustomGrid(int gridWidth, int gridHeight, float cellSize, Vector3 originPosition, Func<CustomGrid<TGridObject>,int,int,TGridObject> createGridObject)
     {
         _width = gridWidth;
         _height = gridHeight;
         _cellSize = cellSize;
         _originPosition = originPosition;
         _cells = new TGridObject[gridWidth, gridHeight];
+
+
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                _cells[x, y] = createGridObject(this, x, y); //allow values to be initialized by a function for any type
+            }
+        }
 
         DebugDrawGrid();
     }
@@ -61,6 +71,16 @@ public class CustomGrid<TGridObject>
 
 
     //Getters
+    public int GetWidth()
+    {
+        return _width;
+    }
+
+    public int GetHeight()
+    {
+        return _height;
+    }
+
     public TGridObject GetCellValue(int x, int y)
     {
         if (IsInGrid(x, y))
@@ -75,5 +95,20 @@ public class CustomGrid<TGridObject>
         int x = Mathf.FloorToInt((worldPosition - _originPosition).x / _cellSize);
         int y = Mathf.FloorToInt((worldPosition - _originPosition).y / _cellSize);
         return GetCellValue(x, y);
+    }
+
+    public Vector2 GetCellIndex(TGridObject cell)
+    {
+        for (int i = 0; i < _width; i++)
+        {
+            for (int j = 0; j < _height; j++)
+            {
+                if (_cells[i, j].Equals(cell))
+                {
+                    return new Vector2(i, j);
+                }
+            }
+        }
+        return new Vector2(-1, -1);
     }
 }
