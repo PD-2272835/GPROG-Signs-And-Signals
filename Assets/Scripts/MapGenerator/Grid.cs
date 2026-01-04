@@ -35,6 +35,7 @@ public class CustomGrid<TGridObject>
     //Helper Functions
     public void DebugDrawGrid()
     {
+        Debug.Log("Grid: " + this + " drawn");
         float maxWorldspaceGridHeight = _originPosition.y + (_height * _cellSize);
         float worldSpaceGridWidth = _originPosition.x + (_width * _cellSize);
         for (int x = 0; x < _width + 1; x++)
@@ -49,7 +50,6 @@ public class CustomGrid<TGridObject>
             Debug.DrawLine(new Vector3(_originPosition.x, _originPosition.y + y, _originPosition.z),
                             new Vector3(worldSpaceGridWidth, _originPosition.y + y, _originPosition.z),
                             Color.white, 100f);
-            Debug.Log("meow");
         }
     }
 
@@ -95,6 +95,14 @@ public class CustomGrid<TGridObject>
         int x = Mathf.FloorToInt((worldPosition - _originPosition).x / _cellSize);
         int y = Mathf.FloorToInt((worldPosition - _originPosition).y / _cellSize);
         return GetCellValue(x, y);
+    }
+
+    public Vector3 WorldPosFromIndex(int x, int y)
+    {
+        //returns world position center of the indexed cell
+        float xPos = _originPosition.x + x * _cellSize + (_cellSize / 2);
+        float yPos = _originPosition.y + y * _cellSize + (_cellSize / 2);
+        return new Vector3(xPos, yPos); //z component is zero with this constructor usage
     }
 
     public Vector2 GetCellIndex(TGridObject cell)

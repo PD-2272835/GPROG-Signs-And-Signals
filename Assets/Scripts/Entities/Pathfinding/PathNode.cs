@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
-
+using UnityEngine;
 public class PathNode
 {
     public int x;
     public int y;
     CustomGrid<PathNode> grid;
-
+    public bool isWalkable;
 
     public PathNode fromNode { get; private set; } //which node this one was traversed from (used for returning the full path)
     public int GCost {  get; private set; } //distance from the start node
@@ -21,6 +20,7 @@ public class PathNode
         this.grid = grid;
         this.x = x;
         this.y = y;
+        this.isWalkable = true;
     }
 
     public void SetGCost(int newG) => GCost = newG;
@@ -41,5 +41,15 @@ public class PathNode
         }
         neighbours.Remove(grid.GetCellValue(x, y)); //this is horrible, but likely better than having another conditional on each loop iteration
         return neighbours;
+    }
+
+    public Vector3 GetWorldPos()
+    {
+        return grid.WorldPosFromIndex(this.x, this.y);
+    }
+
+    public override string ToString()
+    {
+        return "(x: " + x + " y:" + y + ")";
     }
 }

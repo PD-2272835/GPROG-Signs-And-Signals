@@ -1,18 +1,43 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Pathfinding
-{
-    CustomGrid<PathNode> Grid;
+{   
+    const int DIAGONAL_MOVE_COST = 14;
+    const int CARDINAL_MOVE_COST = 10;
+  
+    public static Pathfinding Instance { get; private set; }
+
+    public CustomGrid<PathNode> Grid;
     public List<PathNode> Open;
     public List<PathNode> Closed;
 
 
+
     public Pathfinding(int width, int height)
     {
+        Instance = this;
         Grid = new CustomGrid<PathNode>(width, height, 1.0f, Vector3.zero, (CustomGrid<PathNode> g, int x, int y) => new PathNode(g, x, y));
+    }
+
+
+    public List<Vector3> FindPath(Vector3 startWorldPosition,  Vector3 targetWorldPosition)
+    {
+        var startNode = Grid.GetCellValue(startWorldPosition);
+        var targetNode = Grid.GetCellValue(targetWorldPosition);
+        List<PathNode> path = FindPath(startNode.x, startNode.y, targetNode.x, targetNode.y);
+        List<Vector3> result = new List<Vector3>();
+
+        if (path != null)
+        {
+            foreach (var node in path)
+            {
+                result.Add(node.GetWorldPos());
+            }
+            return result;
+        }
+        return null;
     }
 
 
@@ -24,8 +49,8 @@ public class Pathfinding
         Open = new List<PathNode>() { startNode };
         Closed = new List<PathNode>();
 
-        for (int x =0; x < Grid.GetWidth(); x++) {
-            for (int y =0; y < Grid.GetHeight(); y++)
+        for (int x = 0; x < Grid.GetWidth(); x++) {
+            for (int y = 0; y < Grid.GetHeight(); y++)
             {
                 PathNode pathNode = Grid.GetCellValue(x, y);
                 pathNode.SetGCost(int.MaxValue);
@@ -40,8 +65,10 @@ public class Pathfinding
         while (Open.Any())
         {
             PathNode currentNode = ChooseNodeToExplore();
+            Debug.Log(currentNode);
 
             if (currentNode == targetNode) return ReconstructPath(targetNode); //if the path has been found, return it
+         
 
             Closed.Add(currentNode);
             Open.Remove(currentNode);
@@ -50,7 +77,12 @@ public class Pathfinding
             foreach (var neighbour in currentNode.GetNeighbours())
             {
                 if (Closed.Contains(neighbour)) continue;
-                int tempGCost = currentNode.GCost + CalculateDistanceCost(currentNode, neighbour);
+                if (!neighbour.isWalkable)
+                {
+                    Closed.Add(neighbour);
+                    continue;
+                }
+                int tempGCost = currentNode.GCost + CalculateDistanceCost(currentNode, neighbour); //"tentative cost"
 
                 if (tempGCost < neighbour.GCost)
                 {
@@ -89,13 +121,15 @@ public class Pathfinding
 
     public List<PathNode> ReconstructPath(PathNode endNode) //return the found path
     {
+        Debug.Log("Found Path");
         var currentNode = endNode;
         List<PathNode> path = new List<PathNode>();
         while (currentNode.fromNode != null)
         {
-            path.Prepend(currentNode);
+            path.Append(currentNode);
             currentNode = currentNode.fromNode;
         }
+        path.Reverse();
         return path;
     }
 
@@ -105,8 +139,6 @@ public class Pathfinding
         int xDistance = Mathf.Abs(a.x - b.x);
         int yDistance = Mathf.Abs(a.y - b.y);
         int remaining = Mathf.Abs(xDistance - yDistance);
-        return 14 * Mathf.Min(xDistance, yDistance) + 10 * remaining;
+        return DIAGONAL_MOVE_COST * Mathf.Min(xDistance, yDistance) + CARDINAL_MOVE_COST * remaining;
     }
-
-
 }
