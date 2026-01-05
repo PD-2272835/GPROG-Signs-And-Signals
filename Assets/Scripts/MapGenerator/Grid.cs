@@ -25,7 +25,7 @@ public class CustomGrid<TGridObject>
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                _cells[x, y] = createGridObject(this, x, y); //allow values to be initialized by a function for any type
+                _cells[x, y] = createGridObject(this, x, y);
             }
         }
 
