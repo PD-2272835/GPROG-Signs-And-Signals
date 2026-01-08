@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GooberContext : MonoBehaviour
@@ -14,8 +15,12 @@ public class GooberContext : MonoBehaviour
     public GooberAfraid Afraid = new GooberAfraid();
 
 
-    bool isSelected = false;
+    [SerializeField] private float movementSpeed;
+    public bool isSelected = false;
 
+
+    private List<Vector3> _pathWaypoints;
+    private int _currentWaypoint = 0;
 
     public void Start()
     {
@@ -31,8 +36,6 @@ public class GooberContext : MonoBehaviour
     }
 
 
-
-
     //State Transition
     public void ChangeState(GooberState newState)
     {
@@ -42,4 +45,32 @@ public class GooberContext : MonoBehaviour
         _currentState?.EnterState(this);
     }
 
+
+    //Setters
+    public void SetPath(List<Vector3> path)
+    {
+        _pathWaypoints = path;
+        ChangeState(Pathing);
+    }
+
+    public void SetCurrentWaypoint(int newVal)
+    {
+        _currentWaypoint = newVal;
+    }
+
+    //Getters
+    public List<Vector3> GetWaypoints()
+    {
+        return _pathWaypoints;
+    }
+
+    public Vector3 GetCurrentWaypoint()
+    {
+        return _pathWaypoints[_currentWaypoint];
+    }
+
+    public Vector3 GetPosition()
+    {
+        return transform.position;
+    }
 }
