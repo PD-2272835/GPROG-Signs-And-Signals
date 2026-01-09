@@ -5,7 +5,7 @@ public class GooberContext : MonoBehaviour
 {
     //State Machine
     private GooberState _currentState;
-    private GooberState _previousState;
+    private GooberState _desire;
 
     //State Instances
     public GooberIdle Idle = new GooberIdle();
@@ -15,17 +15,15 @@ public class GooberContext : MonoBehaviour
     public GooberAfraid Afraid = new GooberAfraid();
 
 
-    [SerializeField] private float movementSpeed;
+    [SerializeField] public float movementSpeed { get; private set; }
     public bool isSelected = false;
 
 
-    private List<Vector3> _pathWaypoints;
-    private int _currentWaypoint = 0;
+
 
     public void Start()
     {
         _currentState = Idle;
-        _previousState = Idle;
         _currentState.EnterState(this);
     }
 
@@ -40,37 +38,28 @@ public class GooberContext : MonoBehaviour
     public void ChangeState(GooberState newState)
     {
         _currentState?.ExitState(this);
-        _previousState = _currentState;
         _currentState = newState;
         _currentState?.EnterState(this);
     }
 
 
     //Setters
-    public void SetPath(List<Vector3> path)
+    public void PathTo(Vector3 targetPosition)
     {
-        _pathWaypoints = path;
+        Pathing.SetTarget(targetPosition);
         ChangeState(Pathing);
     }
 
-    public void SetCurrentWaypoint(int newVal)
+    public void UpdatePosition(Vector3 newPosition)
     {
-        _currentWaypoint = newVal;
+        transform.position = newPosition;
     }
 
     //Getters
-    public List<Vector3> GetWaypoints()
-    {
-        return _pathWaypoints;
-    }
-
-    public Vector3 GetCurrentWaypoint()
-    {
-        return _pathWaypoints[_currentWaypoint];
-    }
 
     public Vector3 GetPosition()
     {
         return transform.position;
     }
+
 }

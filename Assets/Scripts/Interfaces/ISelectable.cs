@@ -2,5 +2,6 @@ using UnityEngine;
 
 public interface ISelectable
 {
-    //public abstract
+    public abstract void SetSelected(bool newSelection);
+    public abstract void ToggleSelected();
 }
