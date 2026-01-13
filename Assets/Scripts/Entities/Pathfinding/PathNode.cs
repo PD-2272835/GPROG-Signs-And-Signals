@@ -20,7 +20,7 @@ public class PathNode
         this.grid = grid;
         this.x = x;
         this.y = y;
-        this.isWalkable = true;
+        isWalkable = true; //all nodes should be walkable by default
     }
 
     public void SetGCost(int newG) => GCost = newG;

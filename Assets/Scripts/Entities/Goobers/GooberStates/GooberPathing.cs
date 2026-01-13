@@ -45,7 +45,10 @@ public class GooberPathing : GooberState
                     context.ChangeState(context.Idle); //TODO - this should change to whatever action this goober should be performing (based on the target position)
                 }
             }
-        } 
+        } else
+        {
+            context.ChangeState(context.Idle);
+        }
     }
 
 

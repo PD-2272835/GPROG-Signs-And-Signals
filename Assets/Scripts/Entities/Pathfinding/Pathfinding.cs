@@ -77,14 +77,15 @@ public class Pathfinding
             foreach (var neighbour in currentNode.GetNeighbours())
             {
                 if (Closed.Contains(neighbour)) continue; //ensure the neighbour has not already been considered (still possible to move from closed to open if another path to it is found)
-                if (!neighbour.isWalkable) //ensure the neighbour can be traversed
+                if (!neighbour.isWalkable && neighbour != targetNode) //ensure the neighbour can be traversed
                 {
                     Closed.Add(neighbour);
                     continue;
                 }
+
                 int tempGCost = currentNode.GCost + CalculateDistanceCost(currentNode, neighbour); //calculate "tentative cost"
 
-                if (tempGCost < neighbour.GCost) //select the node with the lowest Gcost node
+                if (tempGCost < neighbour.GCost) //select the node with the lowest Gcost
                 {
                     neighbour.SetFromNode(currentNode);
                     neighbour.SetGCost(tempGCost);

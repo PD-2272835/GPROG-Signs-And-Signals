@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GooberContext : MonoBehaviour
+[RequireComponent(typeof(Collider2D))]
+public class GooberContext : MonoBehaviour, ISelectable
 {
     //State Machine
     private GooberState _currentState;
@@ -16,6 +17,8 @@ public class GooberContext : MonoBehaviour
 
 
     [SerializeField] public float movementSpeed { get; private set; }
+    [SerializeField] private SpriteRenderer _selectionOutline;
+
     public bool isSelected = false;
 
 
@@ -25,12 +28,14 @@ public class GooberContext : MonoBehaviour
     {
         _currentState = Idle;
         _currentState.EnterState(this);
+
+        _selectionOutline = transform.Find("outline").gameObject.GetComponent<SpriteRenderer>();
     }
 
-    //callback to currentstate's update function
+    
     public void Update()
     {
-        _currentState?.Update(this);
+        _currentState?.Update(this); //callback to currentstate's update function
     }
 
 
@@ -55,8 +60,20 @@ public class GooberContext : MonoBehaviour
         transform.position = newPosition;
     }
 
-    //Getters
+    //ISelectable Setters concrete implementation
+    public void SetSelected(bool newSelection)
+    {
+        isSelected = newSelection;
+        _selectionOutline.enabled = isSelected;
+    }
+    public void ToggleSelected()
+    {
+        isSelected = !isSelected;
+        _selectionOutline.enabled = isSelected;
+    }
 
+
+    //Getters
     public Vector3 GetPosition()
     {
         return transform.position;

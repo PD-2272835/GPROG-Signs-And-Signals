@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public interface ISelectable
 {
     public abstract void SetSelected(bool newSelection);
