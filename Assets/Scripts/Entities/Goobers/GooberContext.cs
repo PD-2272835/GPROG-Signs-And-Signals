@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
@@ -6,7 +5,6 @@ public class GooberContext : MonoBehaviour, ISelectable
 {
     //State Machine
     private GooberState _currentState;
-    private GooberState _desire;
 
     //State Instances
     public GooberIdle Idle = new GooberIdle();
@@ -16,11 +14,14 @@ public class GooberContext : MonoBehaviour, ISelectable
     public GooberAfraid Afraid = new GooberAfraid();
 
 
-    [SerializeField] public float movementSpeed { get; private set; }
-    [SerializeField] private SpriteRenderer _selectionOutline;
-
-    public bool isSelected = false;
-
+    [SerializeField] public float movementSpeed = 1f; //{ get; private set; }
+    [SerializeField] private SpriteRenderer _selectionOutline = null;
+    [SerializeField] private bool _isSelected = false;
+    public Vector3 targetPosition;
+    
+    public float wanderChance = 0.02f;
+    public float maxWanderWaitPeriod = 10f;
+    public int maxWanderDistance = 3;
 
 
 
@@ -29,7 +30,12 @@ public class GooberContext : MonoBehaviour, ISelectable
         _currentState = Idle;
         _currentState.EnterState(this);
 
-        _selectionOutline = transform.Find("outline").gameObject.GetComponent<SpriteRenderer>();
+        if (_selectionOutline == null)
+        {
+            _selectionOutline = transform.Find("SelectionOutline").gameObject.GetComponent<SpriteRenderer>();
+            if (_selectionOutline == null ) throw new System.Exception("No Outline Object or Renderer found, cannot implement ISelectable");
+        }
+        _selectionOutline.enabled = _isSelected;
     }
 
     
@@ -51,25 +57,25 @@ public class GooberContext : MonoBehaviour, ISelectable
     //Setters
     public void PathTo(Vector3 targetPosition)
     {
-        Pathing.SetTarget(targetPosition);
+        this.targetPosition = targetPosition;
         ChangeState(Pathing);
     }
 
     public void UpdatePosition(Vector3 newPosition)
     {
-        transform.position = newPosition;
+        transform.position += newPosition;
     }
 
     //ISelectable Setters concrete implementation
     public void SetSelected(bool newSelection)
     {
-        isSelected = newSelection;
-        _selectionOutline.enabled = isSelected;
+        _isSelected = newSelection;
+        _selectionOutline.enabled = _isSelected;
     }
     public void ToggleSelected()
     {
-        isSelected = !isSelected;
-        _selectionOutline.enabled = isSelected;
+        _isSelected = !_isSelected;
+        _selectionOutline.enabled = _isSelected;
     }
 
 

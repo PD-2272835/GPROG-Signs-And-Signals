@@ -35,7 +35,7 @@ public class CustomGrid<TGridObject>
     //Helper Functions
     public void DebugDrawGrid()
     {
-        Debug.Log("Grid: " + this + " drawn");
+        //Debug.Log("Grid: " + this + " drawn");
         float maxWorldspaceGridHeight = _originPosition.y + (_height * _cellSize);
         float worldSpaceGridWidth = _originPosition.x + (_width * _cellSize);
         for (int x = 0; x < _width + 1; x++)
@@ -55,10 +55,16 @@ public class CustomGrid<TGridObject>
 
     public bool IsInGrid(int x, int y)
     {
-        if (x >= 0 && y >= 0 && x <= _width && y <= _height) return true;
+        if (x >= 0 && y >= 0 && x < _width && y < _height) return true;
         return false;
     }
 
+    public bool IsInGrid(Vector3 worldPosition)
+    {
+        int x = Mathf.FloorToInt((worldPosition - _originPosition).x / _cellSize);
+        int y = Mathf.FloorToInt((worldPosition - _originPosition).y / _cellSize);
+        return IsInGrid(x, y);
+    }
 
     //Setters
     public void SetCellValue(TGridObject newValue, int x, int y)
@@ -87,7 +93,7 @@ public class CustomGrid<TGridObject>
         {
             return _cells[x, y];
         }
-        return default(TGridObject);
+        return default;
     }
 
     public TGridObject GetCellValue(Vector3 worldPosition)

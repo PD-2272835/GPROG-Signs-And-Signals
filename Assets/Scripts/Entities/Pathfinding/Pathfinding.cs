@@ -14,37 +14,39 @@ public class Pathfinding
     public List<PathNode> Closed;
 
 
-
     public Pathfinding(int width, int height)
     {
-        Instance = this;
+        if (Instance == null) Instance = this;
+
+        //initialize grid values with a reference to this grid, and the x and y pos of each node
         Grid = new CustomGrid<PathNode>(width, height, 1.0f, Vector3.zero, (CustomGrid<PathNode> g, int x, int y) => new PathNode(g, x, y));
     }
 
 
-    public List<Vector3> FindPath(Vector3 startWorldPosition,  Vector3 targetWorldPosition)
+    public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 targetWorldPosition)
     {
-        var startNode = Grid.GetCellValue(startWorldPosition);
-        var targetNode = Grid.GetCellValue(targetWorldPosition);
+        PathNode startNode = Grid.GetCellValue(startWorldPosition);
+        PathNode targetNode = Grid.GetCellValue(targetWorldPosition);
         List<PathNode> path = FindPath(startNode.x, startNode.y, targetNode.x, targetNode.y);
-        List<Vector3> result = new List<Vector3>();
 
-        if (path != null)
+        if (path == null) return null;
+        else
         {
-            foreach (var node in path)
+            List<Vector3> result = new List<Vector3>();
+            foreach (PathNode node in path)
             {
                 result.Add(node.GetWorldPos());
             }
+
             return result;
         }
-        return null;
     }
 
 
-    public List<PathNode> FindPath(int startX, int startY, int targetX, int targetY)
+    public List<PathNode> FindPath(int startNodeX, int startNodeY, int targetPosX, int targetPosY)
     {
-        PathNode startNode = Grid.GetCellValue(startX, startY);
-        PathNode targetNode = Grid.GetCellValue(targetX, targetY);
+        PathNode startNode = Grid.GetCellValue(startNodeX, startNodeY);
+        PathNode targetNode = Grid.GetCellValue(targetPosX, targetPosY);
 
         Open = new List<PathNode>() { startNode };
         Closed = new List<PathNode>();
@@ -67,8 +69,8 @@ public class Pathfinding
             PathNode currentNode = ChooseNodeToExplore();
             Debug.Log(currentNode);
 
-            if (currentNode == targetNode) return ReconstructPath(targetNode); //if the path has been found, return it
-         
+            if (currentNode == targetNode) return ReconstructPath(targetNode); //if the path has been found, return it;
+                
 
             Closed.Add(currentNode);
             Open.Remove(currentNode);
@@ -109,7 +111,7 @@ public class Pathfinding
     private PathNode ChooseNodeToExplore() //evaluate which node to explore
     {
         var current = Open[0];
-        foreach (var other in Open) //other is a different node we evaluate from the open list
+        foreach (var other in Open)
         {
             if (other.FCost < current.FCost || (other.FCost == current.FCost && other.HCost < current.HCost)) //choose either Node with lowest Fcost, if there are multiple of same Fcost, node with both lowest F and H cost
             {
@@ -122,12 +124,11 @@ public class Pathfinding
 
     public List<PathNode> ReconstructPath(PathNode endNode) //return the found path
     {
-        Debug.Log("Found Path");
-        var currentNode = endNode;
+        PathNode currentNode = endNode;
         List<PathNode> path = new List<PathNode>();
-        while (currentNode.fromNode != null)
+        while (currentNode != null)
         {
-            path.Append(currentNode);
+            path.Add(currentNode);
             currentNode = currentNode.fromNode;
         }
         path.Reverse();

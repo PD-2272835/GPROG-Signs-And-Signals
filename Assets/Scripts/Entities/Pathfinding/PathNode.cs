@@ -35,11 +35,11 @@ public class PathNode
         {
             for (int j = 0; j < 3; j++)
             {
-                var current = grid.GetCellValue(x - 1 + i, y - 1 + j);//reference frame of [x-1,y-1] to [x+1,y+1]
-                if (current != default(PathNode)) neighbours.Add(current); //GetCellValue returns default(TGridObject) if the index is not within bounds of grid
+                var current = grid.GetCellValue(this.x - 1 + i, this.y - 1 + j);//reference frame of [x-1,y-1] to [x+1,y+1]
+                if (current != default(PathNode) && current != null) neighbours.Add(current); //GetCellValue returns default(TGridObject) if the index is not within bounds of grid
             }
         }
-        neighbours.Remove(grid.GetCellValue(x, y)); //this is horrible, but likely better than having another conditional on each loop iteration
+        neighbours.Remove(grid.GetCellValue(this.x, this.y)); //this is horrible, but likely better than having another conditional on each loop iteration
         return neighbours;
     }
 
