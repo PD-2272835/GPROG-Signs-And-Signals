@@ -37,9 +37,7 @@ public class GooberPathing : GooberState
         }
         else
         {
-            Debug.Log("the number of waypoints left is " + _pathWaypoints.Count.ToString());
             Vector3 currentWaypoint = _pathWaypoints[_currentWaypointIndex];
-            Debug.Log("pathing to waypoint " + currentWaypoint.ToString() + "which is " + Vector3.Distance(context.GetPosition(), currentWaypoint) + " away");
             if (Vector3.Distance(context.GetPosition(), currentWaypoint) > 0.1f) //TODO: make this .1f a variable - probably the size of a grid cell from somewhere
             {
                 Vector3 direction = (currentWaypoint - context.GetPosition()).normalized;

@@ -1,3 +1,4 @@
+using System.Xml.Serialization;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
@@ -17,29 +18,32 @@ public class GooberContext : MonoBehaviour, ISelectable
     [SerializeField] public float movementSpeed = 1f; //{ get; private set; }
     [SerializeField] private SpriteRenderer _selectionOutline = null;
     [SerializeField] private bool _isSelected = false;
+
+    
     public Vector3 targetPosition;
     
     public float wanderChance = 0.02f;
     public float maxWanderWaitPeriod = 10f;
     public int maxWanderDistance = 3;
 
-
-
-    public void Start()
+    private void Awake()
     {
         _currentState = Idle;
         _currentState.EnterState(this);
+    }
 
+    private void Start()
+    {
         if (_selectionOutline == null)
         {
             _selectionOutline = transform.Find("SelectionOutline").gameObject.GetComponent<SpriteRenderer>();
-            if (_selectionOutline == null ) throw new System.Exception("No Outline Object or Renderer found, cannot implement ISelectable");
+            if (_selectionOutline == null) throw new System.Exception("No Outline Object or Renderer found, cannot implement ISelectable");
         }
         _selectionOutline.enabled = _isSelected;
     }
 
-    
-    public void Update()
+
+    private void Update()
     {
         _currentState?.Update(this); //callback to currentstate's update function
     }
@@ -65,17 +69,16 @@ public class GooberContext : MonoBehaviour, ISelectable
     {
         transform.position += newPosition;
     }
-
-    //ISelectable Setters concrete implementation
+    
+    //ISelectable implementation
     public void SetSelected(bool newSelection)
     {
         _isSelected = newSelection;
         _selectionOutline.enabled = _isSelected;
     }
-    public void ToggleSelected()
+    public bool GetSelected()
     {
-        _isSelected = !_isSelected;
-        _selectionOutline.enabled = _isSelected;
+        return _isSelected;
     }
 
 

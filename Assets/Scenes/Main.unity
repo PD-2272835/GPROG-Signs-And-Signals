@@ -287,6 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Testing
   _gridWidth: 10
   _gridHeight: 10
+  bush: {fileID: 213435822178504066, guid: 58d4fb1d87739024681d2c3520b4d530, type: 3}
 --- !u!4 &383554796
 Transform:
   m_ObjectHideFlags: 0
