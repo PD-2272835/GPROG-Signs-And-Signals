@@ -1,67 +1,62 @@
-using System.Xml.Serialization;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 public class GooberContext : MonoBehaviour, ISelectable
 {
     //State Machine
-    private GooberState _currentState;
+    private GooberState _CurrentState;
 
     //State Instances
     public GooberIdle Idle = new GooberIdle();
     public GooberPathing Pathing = new GooberPathing();
     public GooberWorking Working = new GooberWorking();
-    public GooberHunting Hunting = new GooberHunting();
-    public GooberAfraid Afraid = new GooberAfraid();
-
-
-    [SerializeField] public float movementSpeed = 1f; //{ get; private set; }
-    [SerializeField] private SpriteRenderer _selectionOutline = null;
-    [SerializeField] private bool _isSelected = false;
-
     
-    public Vector3 targetPosition;
-    
-    public float wanderChance = 0.02f;
-    public float maxWanderWaitPeriod = 10f;
-    public int maxWanderDistance = 3;
 
-    private void Awake()
-    {
-        _currentState = Idle;
-        _currentState.EnterState(this);
-    }
+    //Fields used to implement ISelectable
+    [SerializeField] private SpriteRenderer _SelectionOutline = null;
+    [SerializeField] private bool _IsSelected = false;
+
+    //Pathing Parameters
+    public float MovementSpeed = 3f;
+    public Vector3 TargetPosition;
+    public float PathVariance = 0.1f;
+    public float WanderChance = 0.7f;
+    public float MaxWanderWaitPeriod = 4f;
+    public int MaxWanderDistance = 3;
 
     private void Start()
     {
-        if (_selectionOutline == null)
+        _CurrentState = Idle;
+        _CurrentState.EnterState(this);
+
+        if (_SelectionOutline == null)
         {
-            _selectionOutline = transform.Find("SelectionOutline").gameObject.GetComponent<SpriteRenderer>();
-            if (_selectionOutline == null) throw new System.Exception("No Outline Object or Renderer found, cannot implement ISelectable");
+            _SelectionOutline = transform.Find("SelectionOutline").gameObject.GetComponent<SpriteRenderer>();
+            if (_SelectionOutline == null) throw new System.Exception("No Outline Object or Renderer found, cannot implement ISelectable");
         }
-        _selectionOutline.enabled = _isSelected;
+        _SelectionOutline.enabled = _IsSelected;
     }
 
 
     private void Update()
     {
-        _currentState?.Update(this); //callback to currentstate's update function
+        _CurrentState?.Update(this); //callback to currentstate's update function
     }
 
 
     //State Transition
     public void ChangeState(GooberState newState)
     {
-        _currentState?.ExitState(this);
-        _currentState = newState;
-        _currentState?.EnterState(this);
+        _CurrentState?.ExitState(this);
+        _CurrentState = newState;
+        _CurrentState?.EnterState(this);
     }
 
 
     //Setters
-    public void PathTo(Vector3 targetPosition)
+    public void PathTo(Vector3 TargetPosition)
     {
-        this.targetPosition = targetPosition;
+        this.TargetPosition = TargetPosition;
         ChangeState(Pathing);
     }
 
@@ -73,12 +68,12 @@ public class GooberContext : MonoBehaviour, ISelectable
     //ISelectable implementation
     public void SetSelected(bool newSelection)
     {
-        _isSelected = newSelection;
-        _selectionOutline.enabled = _isSelected;
+        _IsSelected = newSelection;
+        _SelectionOutline.enabled = _IsSelected;
     }
     public bool GetSelected()
     {
-        return _isSelected;
+        return _IsSelected;
     }
 
 

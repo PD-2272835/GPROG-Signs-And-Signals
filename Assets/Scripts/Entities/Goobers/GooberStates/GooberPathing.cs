@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class GooberPathing : GooberState
 {
-    private List<Vector3> _pathWaypoints = new List<Vector3>();
-    private int _currentWaypointIndex = 0;
+    private List<Vector3> _PathWaypoints = new List<Vector3>();
+    private int _CurrentWaypointIndex = 0;
 
 
     public override void EnterState(GooberContext context)
     {
-        Debug.Log("entered Pathing and started pathing " + context.name + " to cell at " + context.targetPosition);
+        Debug.Log("entered Pathing and started pathing " + context.name + " to cell at " + context.TargetPosition);
         if (Pathfinding.Instance != null)
         {
-            Debug.Log("target position is: " + context.targetPosition.ToString());
-            _pathWaypoints = Pathfinding.Instance.FindPath(context.GetPosition(), context.targetPosition);
-            Debug.Log("is path waypoints empty or null? :" + (_pathWaypoints.Any() != true));
+            Debug.Log("target position is: " + context.TargetPosition.ToString());
+            _PathWaypoints = Pathfinding.Instance.FindPath(context.GetPosition(), context.TargetPosition);
+            Debug.Log("is path waypoints empty or null? :" + (_PathWaypoints.Any() != true));
         }
         else
         {
@@ -25,30 +25,38 @@ public class GooberPathing : GooberState
 
     public override void ExitState(GooberContext context)
     {
-        _pathWaypoints = null;
-        _currentWaypointIndex = 0;
+        _PathWaypoints = null;
+        _CurrentWaypointIndex = 0;
     }
 
     public override void Update(GooberContext context)
     {
-        if (_pathWaypoints?.Any() != true) //ensure pathWaypoints is not null or empty
+        if (_PathWaypoints?.Any() != true) //ensure pathWaypoints is not null or empty
         {
             context.ChangeState(context.Idle);
         }
         else
         {
-            Vector3 currentWaypoint = _pathWaypoints[_currentWaypointIndex];
-            if (Vector3.Distance(context.GetPosition(), currentWaypoint) > 0.1f) //TODO: make this .1f a variable - probably the size of a grid cell from somewhere
+            //if there is a path, move through it
+            Vector3 currentWaypoint = _PathWaypoints[_CurrentWaypointIndex];
+            if (Vector3.Distance(context.GetPosition(), currentWaypoint) > context.PathVariance)
             {
+
                 Vector3 direction = (currentWaypoint - context.GetPosition()).normalized;
-                context.UpdatePosition(context.movementSpeed * Time.deltaTime * direction);
+                context.UpdatePosition(context.MovementSpeed * Time.deltaTime * direction);
             }
             else
             {
-                _currentWaypointIndex++;
-                if (_currentWaypointIndex >= _pathWaypoints.Count) //path fully traversed, exit pathing state
+                _CurrentWaypointIndex++;
+
+                //if path fully traversed, exit pathing state
+                if (_CurrentWaypointIndex >= _PathWaypoints.Count) 
                 {
-                    context.ChangeState(context.Idle); //TODO - this should change to whatever action this goober should be performing (based on the target position)
+                    IGooberInteractable destinationOccupier = (IGooberInteractable)WorldManager.Instance.GetOccupierFromWorldPos(context.GetPosition());
+                    
+                    if (destinationOccupier != null) context.ChangeState(context.Working);
+                   
+                    context.ChangeState(context.Idle);
                 }
             }
         }

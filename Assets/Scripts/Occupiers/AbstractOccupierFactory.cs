@@ -2,5 +2,5 @@ using UnityEngine;
 
 public abstract class AbstractOccupierFactory : MonoBehaviour
 {
-    public abstract IOccupier CreateOccupier();
+    public abstract Occupier CreateOccupier(Vector3 position);
 }

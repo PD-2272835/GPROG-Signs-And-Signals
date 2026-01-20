@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,12 +9,10 @@ public class Testing : MonoBehaviour
     [SerializeField] private int _gridWidth = 10, _gridHeight = 10;
     InputAction interact;
     Pathfinding pathfinding;
-    [SerializeField] BerryBush bush;
 
     void Start()
     {
-        Instantiate(bush);
-        pathfinding = new Pathfinding(_gridWidth, _gridHeight);
+        //pathfinding = new Pathfinding(_gridWidth, _gridHeight);
         interact = InputSystem.actions.FindAction("Interact");
     }
    
@@ -23,8 +20,6 @@ public class Testing : MonoBehaviour
     {
         if (interact.WasPressedThisFrame())
         {
-            
-
             var mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             Debug.Log(mousePos);
             

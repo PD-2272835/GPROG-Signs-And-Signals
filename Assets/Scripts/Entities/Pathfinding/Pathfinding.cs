@@ -14,12 +14,12 @@ public class Pathfinding
     public List<PathNode> Closed;
 
 
-    public Pathfinding(int width, int height)
+    public Pathfinding(int width, int height, float cellSize, Vector3 originPosition)
     {
         if (Instance == null) Instance = this;
 
         //initialize grid values with a reference to this grid, and the x and y pos of each node
-        Grid = new CustomGrid<PathNode>(width, height, 1.0f, Vector3.zero, (CustomGrid<PathNode> g, int x, int y) => new PathNode(g, x, y));
+        Grid = new CustomGrid<PathNode>(width, height, cellSize, originPosition, (CustomGrid<PathNode> g, int x, int y) => new PathNode(g, x, y));
     }
 
 
@@ -27,7 +27,7 @@ public class Pathfinding
     {
         PathNode startNode = Grid.GetCellValue(startWorldPosition);
         PathNode targetNode = Grid.GetCellValue(targetWorldPosition);
-        List<PathNode> path = FindPath(startNode.x, startNode.y, targetNode.x, targetNode.y);
+        List<PathNode> path = FindPath(startNode.XPos, startNode.YPos, targetNode.XPos, targetNode.YPos);
 
         if (path == null) return null;
         else
@@ -67,7 +67,6 @@ public class Pathfinding
         while (Open.Any())
         {
             PathNode currentNode = ChooseNodeToExplore();
-            Debug.Log(currentNode);
 
             if (currentNode == targetNode) return ReconstructPath(targetNode); //if the path has been found, return it;
                 
@@ -79,7 +78,7 @@ public class Pathfinding
             foreach (var neighbour in currentNode.GetNeighbours())
             {
                 if (Closed.Contains(neighbour)) continue; //ensure the neighbour has not already been considered (still possible to move from closed to open if another path to it is found)
-                if (!neighbour.isWalkable && neighbour != targetNode) //ensure the neighbour can be traversed
+                if (!neighbour.IsWalkable && neighbour != targetNode) //ensure the neighbour can be traversed
                 {
                     Closed.Add(neighbour);
                     continue;
@@ -129,7 +128,7 @@ public class Pathfinding
         while (currentNode != null)
         {
             path.Add(currentNode);
-            currentNode = currentNode.fromNode;
+            currentNode = currentNode.FromNode;
         }
         path.Reverse();
         return path;
@@ -138,8 +137,8 @@ public class Pathfinding
 
     private int CalculateDistanceCost(PathNode a, PathNode b)
     {
-        int xDistance = Mathf.Abs(a.x - b.x);
-        int yDistance = Mathf.Abs(a.y - b.y);
+        int xDistance = Mathf.Abs(a.XPos - b.XPos);
+        int yDistance = Mathf.Abs(a.YPos - b.YPos);
         int remaining = Mathf.Abs(xDistance - yDistance);
         return DIAGONAL_MOVE_COST * Mathf.Min(xDistance, yDistance) + CARDINAL_MOVE_COST * remaining;
     }
