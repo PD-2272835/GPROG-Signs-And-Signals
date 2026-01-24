@@ -1,6 +1,3 @@
-using System;
-using UnityEngine;
-
 public abstract class GooberState
 {
     public abstract void EnterState(GooberContext context);

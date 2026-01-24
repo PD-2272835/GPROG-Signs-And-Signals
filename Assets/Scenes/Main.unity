@@ -266,7 +266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 383554796}
   - component: {fileID: 383554799}
-  - component: {fileID: 383554798}
+  - component: {fileID: 383554800}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -289,19 +289,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &383554798
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 383554794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49c3f279c92ca584a80f026a18340af5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BerryBushFactory
-  _Prefab: {fileID: -6170525889236171457, guid: c614024f30b192a46a86d42629095287, type: 3}
 --- !u!114 &383554799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,6 +308,19 @@ MonoBehaviour:
   _NoiseFrequency: 30
   _NoiseOffsetX: 0
   _NoiseOffsetY: 0
+--- !u!114 &383554800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383554794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3f279c92ca584a80f026a18340af5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BerryBushFactory
+  _Prefab: {fileID: -6170525889236171457, guid: c614024f30b192a46a86d42629095287, type: 3}
 --- !u!1001 &1159455202
 PrefabInstance:
   m_ObjectHideFlags: 0

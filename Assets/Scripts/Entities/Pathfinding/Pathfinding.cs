@@ -6,17 +6,20 @@ public class Pathfinding
 {   
     const int DIAGONAL_MOVE_COST = 14;
     const int CARDINAL_MOVE_COST = 10;
-  
-    public static Pathfinding Instance { get; private set; }
+
+    private static Pathfinding _Instance;
+    public static Pathfinding GetInstance()
+    {  return _Instance; }
+
 
     public CustomGrid<PathNode> Grid;
-    public List<PathNode> Open;
-    public List<PathNode> Closed;
+    private List<PathNode> _Open;
+    private List<PathNode> _Closed;
 
 
     public Pathfinding(int width, int height, float cellSize, Vector3 originPosition)
     {
-        if (Instance == null) Instance = this;
+        if (_Instance == null) _Instance = this;
 
         //initialize grid values with a reference to this grid, and the x and y pos of each node
         Grid = new CustomGrid<PathNode>(width, height, cellSize, originPosition, (CustomGrid<PathNode> g, int x, int y) => new PathNode(g, x, y));
@@ -48,8 +51,8 @@ public class Pathfinding
         PathNode startNode = Grid.GetCellValue(startNodeX, startNodeY);
         PathNode targetNode = Grid.GetCellValue(targetPosX, targetPosY);
 
-        Open = new List<PathNode>() { startNode };
-        Closed = new List<PathNode>();
+        _Open = new List<PathNode>() { startNode };
+        _Closed = new List<PathNode>();
 
         for (int x = 0; x < Grid.GetWidth(); x++) {
             for (int y = 0; y < Grid.GetHeight(); y++)
@@ -64,23 +67,23 @@ public class Pathfinding
         startNode.SetHCost(CalculateDistanceCost(startNode, targetNode));
 
 
-        while (Open.Any())
+        while (_Open.Any())
         {
             PathNode currentNode = ChooseNodeToExplore();
 
             if (currentNode == targetNode) return ReconstructPath(targetNode); //if the path has been found, return it;
                 
 
-            Closed.Add(currentNode);
-            Open.Remove(currentNode);
+            _Closed.Add(currentNode);
+            _Open.Remove(currentNode);
             
 
             foreach (var neighbour in currentNode.GetNeighbours())
             {
-                if (Closed.Contains(neighbour)) continue; //ensure the neighbour has not already been considered (still possible to move from closed to open if another path to it is found)
+                if (_Closed.Contains(neighbour)) continue; //ensure the neighbour has not already been considered (still possible to move from closed to open if another path to it is found)
                 if (!neighbour.IsWalkable && neighbour != targetNode) //ensure the neighbour can be traversed
                 {
-                    Closed.Add(neighbour);
+                    _Closed.Add(neighbour);
                     continue;
                 }
 
@@ -92,9 +95,9 @@ public class Pathfinding
                     neighbour.SetGCost(tempGCost);
                     neighbour.SetHCost(CalculateDistanceCost(neighbour, targetNode));
 
-                    if (!Open.Contains(neighbour))
+                    if (!_Open.Contains(neighbour))
                     {
-                        Open.Add(neighbour);
+                        _Open.Add(neighbour);
                     }
                 }
             }
@@ -109,8 +112,8 @@ public class Pathfinding
     
     private PathNode ChooseNodeToExplore() //evaluate which node to explore
     {
-        var current = Open[0];
-        foreach (var other in Open)
+        var current = _Open[0];
+        foreach (var other in _Open)
         {
             if (other.FCost < current.FCost || (other.FCost == current.FCost && other.HCost < current.HCost)) //choose either Node with lowest Fcost, if there are multiple of same Fcost, node with both lowest F and H cost
             {
@@ -121,7 +124,7 @@ public class Pathfinding
     }
 
 
-    public List<PathNode> ReconstructPath(PathNode endNode) //return the found path
+    private List<PathNode> ReconstructPath(PathNode endNode) //return the found path
     {
         PathNode currentNode = endNode;
         List<PathNode> path = new List<PathNode>();

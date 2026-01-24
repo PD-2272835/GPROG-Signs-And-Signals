@@ -53,10 +53,15 @@ public class GooberContext : MonoBehaviour, ISelectable
     }
 
 
-    //Setters
-    public void PathTo(Vector3 TargetPosition)
+    public IGooberInteractable GetInteractableAtCurrentPos()
     {
-        this.TargetPosition = TargetPosition;
+        return (IGooberInteractable)WorldManager.GetInstance().GetOccupierFromWorldPos(GetPosition());
+    }
+
+    //Setters
+    public void PathTo(Vector3 targetPosition)
+    {
+        TargetPosition = targetPosition;
         ChangeState(Pathing);
     }
 

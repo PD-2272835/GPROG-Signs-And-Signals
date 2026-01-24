@@ -11,10 +11,10 @@ public class GooberPathing : GooberState
     public override void EnterState(GooberContext context)
     {
         Debug.Log("entered Pathing and started pathing " + context.name + " to cell at " + context.TargetPosition);
-        if (Pathfinding.Instance != null)
+        if (Pathfinding.GetInstance() != null)
         {
             Debug.Log("target position is: " + context.TargetPosition.ToString());
-            _PathWaypoints = Pathfinding.Instance.FindPath(context.GetPosition(), context.TargetPosition);
+            _PathWaypoints = Pathfinding.GetInstance().FindPath(context.GetPosition(), context.TargetPosition);
             Debug.Log("is path waypoints empty or null? :" + (_PathWaypoints.Any() != true));
         }
         else
@@ -52,7 +52,7 @@ public class GooberPathing : GooberState
                 //if path fully traversed, exit pathing state
                 if (_CurrentWaypointIndex >= _PathWaypoints.Count) 
                 {
-                    IGooberInteractable destinationOccupier = (IGooberInteractable)WorldManager.Instance.GetOccupierFromWorldPos(context.GetPosition());
+                    IGooberInteractable destinationOccupier = context.GetInteractableAtCurrentPos();
                     
                     if (destinationOccupier != null) context.ChangeState(context.Working);
                    

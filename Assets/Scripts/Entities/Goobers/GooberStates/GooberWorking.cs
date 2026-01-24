@@ -7,7 +7,7 @@ public class GooberWorking : GooberState
 
     public override void EnterState(GooberContext context)
     {
-        _Interactable = (IGooberInteractable)WorldManager.Instance.GetOccupierFromWorldPos(context.GetPosition());
+        _Interactable = context.GetInteractableAtCurrentPos();
 
         if (_Interactable.CanGooberInteract(context))
         {

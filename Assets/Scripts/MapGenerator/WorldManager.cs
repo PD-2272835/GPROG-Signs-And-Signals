@@ -1,20 +1,23 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent (typeof(AbstractOccupierFactory))]
+[RequireComponent(typeof(OccupierFactory))]
 public class WorldManager : MonoBehaviour
 {
     //this should be a singleton attached to a GameObject to hold the World, accessible through this static Instance
-    public static WorldManager Instance { get; private set; }
+    private static WorldManager _Instance;
+    public static WorldManager GetInstance()
+    {  return _Instance; }
 
     //Map/Pathfinding Creation Parameters
     [SerializeField] private int _MapWidth;
     [SerializeField] private int _MapHeight;
     [SerializeField] private float _CellSize = 1f;
 
+    private OccupierFactory[] _OccupierFactories;
+
     private Pathfinding _PathfindingInstance;
-    private CustomGrid<Occupier> _Occupiers;
+    private CustomGrid<Occupier> _OccupierGrid;
 
 
     //Proc-gen Parameters
@@ -23,20 +26,19 @@ public class WorldManager : MonoBehaviour
     [SerializeField] private float _NoiseOffsetX;
     [SerializeField] private float _NoiseOffsetY;
 
-    private AbstractOccupierFactory[] _OccupierFactories;
 
 
-
-    void Awake()
+    private void Awake()
     {
-        if (Instance != null && Instance != this) Destroy(this);
-        else Instance = this;
+        //ensure this class is a singleton
+        if (_Instance != null && _Instance != this) Destroy(this);
+        else _Instance = this;
 
-        if (Pathfinding.Instance == null) _PathfindingInstance = new Pathfinding(_MapWidth, _MapHeight, _CellSize, transform.position);
+        if (Pathfinding.GetInstance() == null) _PathfindingInstance = new Pathfinding(_MapWidth, _MapHeight, _CellSize, transform.position);
 
-        _Occupiers = new CustomGrid<Occupier>(_MapWidth, _MapHeight, _CellSize, transform.position);
+        _OccupierGrid = new CustomGrid<Occupier>(_MapWidth, _MapHeight, _CellSize, transform.position);
 
-        _OccupierFactories = gameObject.GetComponents<AbstractOccupierFactory>();
+        _OccupierFactories = gameObject.GetComponents<OccupierFactory>();
 
         _NoiseOffsetX = Random.Range(0f, 100f);
         _NoiseOffsetY = Random.Range(0, 100f);
@@ -56,10 +58,10 @@ public class WorldManager : MonoBehaviour
                 float xCoord = x / _MapWidth;
                 float yCoord = y / _MapHeight;
                 float perlinValue = Mathf.PerlinNoise(_NoiseFrequency * xCoord - _NoiseOffsetX, _NoiseFrequency * yCoord - _NoiseOffsetY);
-                Debug.Log(perlinValue);
+                
+                //if the perlin noise is above a placement threshhold value, place a random occupier from the _Occupiers list
                 if (perlinValue > _OccupierPlacementThreshold)
                 {
-                    Debug.Log("tried to place occupier");
                     PlaceOccupier(_OccupierFactories[Random.Range(0, _OccupierFactories.Length)], (int)x, (int)y);
                 }
             }
@@ -68,16 +70,16 @@ public class WorldManager : MonoBehaviour
 
 
 
-    public void PlaceOccupier(AbstractOccupierFactory occupierFactory, int x, int y)
+    public void PlaceOccupier(OccupierFactory occupierFactory, int x, int y)
     {
-        Occupier occupier = occupierFactory.CreateOccupier(_Occupiers.WorldPosFromIndex(x, y));
-        _Occupiers.SetCellValue(occupier, x, y);
-        Pathfinding.Instance.Grid.GetCellValue(x, y).IsWalkable = false;
+        Occupier occupierInstance = occupierFactory.CreateOccupier(_OccupierGrid.WorldPosFromIndex(x, y));
+        _OccupierGrid.SetCellValue(occupierInstance, x, y);
+        Pathfinding.GetInstance().Grid.GetCellValue(x, y).IsWalkable = false;
     }
 
     public Occupier GetOccupierFromWorldPos(Vector3 worldPos)
     {
-        return _Occupiers.GetCellValue(worldPos);
+        return _OccupierGrid.GetCellValue(worldPos);
     }
 
 
@@ -85,7 +87,7 @@ public class WorldManager : MonoBehaviour
     {
         if (_PathfindingInstance != null)
         {
-            Pathfinding.Instance.Grid.DebugDrawGrid();
+            Pathfinding.GetInstance().Grid.DebugDrawGrid();
         }
     }
 }

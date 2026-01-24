@@ -4,7 +4,6 @@ using UnityEngine;
 [RequireComponent (typeof(Collider2D))]
 public abstract class Occupier : MonoBehaviour, ISelectable, IInitializable
 {
-    [SerializeField] protected Sprite _Sprite;
     protected SpriteRenderer _SpriteRenderer; 
     protected Collider2D _HitBox;
     protected bool _IsSelected = false;

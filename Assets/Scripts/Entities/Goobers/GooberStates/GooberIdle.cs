@@ -32,7 +32,7 @@ public class GooberIdle : GooberState
         int randomYDelta = Random.Range(0, 3) * GeneratePositiveOrNegative();
         Vector3 randomPosition = new Vector3(originPosition.x + randomXDelta, originPosition.y + randomYDelta);
         
-        if (Pathfinding.Instance.Grid.IsInGrid(randomPosition)) return randomPosition;
+        if (Pathfinding.GetInstance().Grid.IsInGrid(randomPosition)) return randomPosition;
         else return GenerateNewWanderTarget(originPosition);
     }
 
