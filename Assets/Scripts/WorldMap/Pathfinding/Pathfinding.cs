@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
+//WARNING: this class is dependant on being constructed BEFORE it can be used.
 public class Pathfinding
 {   
     const int DIAGONAL_MOVE_COST = 14;
@@ -62,6 +64,7 @@ public class Pathfinding
                 pathNode.SetFromNode(null);
             }
         }
+
 
         startNode.SetGCost(0);
         startNode.SetHCost(CalculateDistanceCost(startNode, targetNode));
